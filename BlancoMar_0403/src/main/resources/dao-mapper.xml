@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hs">
+
+	<insert id="insertlogin"  parameterType="com.hs.app.dto.User_Dto">
+  		insert into user_list values (null, #{user_id}, #{user_password}, #{user_name}, #{user_addres}, #{user_tel}, default)
+  	</insert>
+  	<insert parameterType="com.hs.app.dto.Dress_list_Dto" id="insertlist">
+  		insert into dress_list values (null, #{sort_num}, #{dress_name}, #{dress_price}, #{dress_color}, #{dress_content}, #{dress_file_name}) 
+  	</insert>
+	<insert parameterType="com.hs.app.dto.Dress_inven_Dto" id="insertinven">
+		insert into dress_inven values (#{dress_num}, #{dress_size}, #{dress_stock}) 
+	</insert>
+	<select id="maxnum"  resultType="Integer">
+		SELECT MAX(dress_num) FROM dress_list
+	</select>
+	<select id="login" resultType="Integer" >
+		select count(*) from user_list where user_id =#{user_id} and user_password= #{user_password} 
+	</select>
+
+	<select id="admintest" resultType="Integer">
+		SELECT user_grade FROM user_list WHERE user_id=#{user_id}
+	</select>
+	
+	<select id="review_list" resultType="com.hs.app.dto.Review_Dto">
+      select * from review_list order by review_idx desc
+   </select>
+   
+   <select id="review_one" resultType="com.hs.app.dto.Review_Dto">
+      select * from review_list where review_idx = #{review_idx}
+   </select>
+   
+   <insert id = "do_review" parameterType="com.hs.app.dto.Review_Dto">
+      INSERT INTO review_list VALUES(NULL, #{user_id}, #{review_title}, #{review_content}, CURDATE(), default, default);
+   </insert>
+   
+   <update id = "doupdate_Review" parameterType="com.hs.app.dto.Review_Dto" >
+      update review_list set review_title = #{review_title}, review_content = #{review_content} where review_idx = #{review_idx}
+   </update>
+  	
+  	<select id="logins" resultType="Integer">
+		select count(*) from user_list where user_id =#{user_id} and user_password= #{user_password} 
+	</select>
+	
+	<select id="log_upchk" resultType="int">
+   		select count(*) from user_list where user_id =#{user_id} 
+	</select> 
+	
+	  <select id="dresslist" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list order by dress_num DESC
+  	</select>
+  	
+  	<select id="dressallcnt" resultType="Integer">
+  		SELECT SUM(dress_stock) FROM dress_inven WHERE dress_num = #{dress_num}
+  	</select>
+  	
+  	<select id="dressinvenlist" resultType="com.hs.app.dto.Dress_inven_Dto">
+  		select * from dress_inven where dress_num = #{dress_num};
+  	</select>
+	
+	<delete id="delete"  parameterType="com.hs.app.dto.Review_Dto" >
+      delete from review_list WHERE  review_idx = #{review_idx}
+   </delete>
+   
+      <select id="reply_list" resultType="com.hs.app.dto.Reply_Dto">
+      select * from review_comment where review_idx = #{review_idx}
+   </select>
+   
+   <insert id = "do_reply" parameterType="com.hs.app.dto.Reply_Dto">
+      INSERT INTO review_comment VALUES(NULL, #{review_idx}, #{user_id}, #{comment_content}, CURDATE());
+   </insert>
+   
+      <update id = "update_hit" parameterType="Integer"> <!-- 조회수 -->
+      update review_list set review_viewcnt = review_viewcnt +1 where review_idx = #{review_idx}
+   </update>
+   
+   <select id="sortlist" resultType="com.hs.app.dto.Dress_sort_Dto">
+   		SELECT * FROM dress_sort;
+   </select>
+   
+   <select id="commentcnt" resultType="Integer">
+   		SELECT COUNT(*) FROM review_comment WHERE review_idx = #{review_idx}
+   </select>
+   
+         <insert id = "do_notice" parameterType="com.hs.app.dto.Notice_Dto"> <!-- 공지글 작성-->
+      INSERT INTO notice_list VALUES(NULL,#{user_id}, #{notice_title}, #{notice_content}, CURDATE(), default);
+   </insert>
+   
+   <select id="notice_list" resultType="com.hs.app.dto.Notice_Dto"> <!-- 공지목록 오름차순 -->
+      select * from notice_list order by notice_idx desc
+   </select>
+
+   <select id="notice_one" resultType="com.hs.app.dto.Notice_Dto"> <!-- 선택한 공지 읽어오기 -->
+      select * from notice_list where notice_idx = #{notice_idx}
+   </select>
+
+   <update id = "notice_update" parameterType="com.hs.app.dto.Notice_Dto" >
+      update notice_list set notice_title = #{notice_title}, notice_content = #{notice_content} where notice_idx = #{notice_idx}
+   </update>
+
+	<delete id="notice_delete"  parameterType="com.hs.app.dto.Notice_Dto" >
+		delete from notice_list WHERE notice_idx = #{notice_idx}
+   </delete>
+   
+   <update id = "notice_hit" parameterType="Integer"> <!-- 조회수 -->
+      update notice_list set notice_viewcnt = notice_viewcnt +1 where notice_idx = #{notice_idx}
+   </update>
+   
+   <insert parameterType="com.hs.app.dto.File_upload_Dto" id="insertfile">
+		insert into blancomarimg_file values (null, #{dress_num}, #{sort_num}, #{file_name}, #{file_path}) 
+	</insert>
+	
+	<select id="sideall" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list order by dress_num desc
+  	</select>
+  	
+  	<select id="sideouter" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list where sort_num=1 order by dress_num DESC
+  	</select>
+  	
+  	<select id="sidetop" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list where sort_num=2 order by dress_num DESC
+  	</select>
+  	
+  	<select id="sidepants" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list where sort_num=3 order by dress_num DESC
+  	</select>
+  	
+  	<select id="detailpage" resultType="com.hs.app.dto.File_upload_Dto">
+  		select * from blancomarimg_file where dress_num = #{dress_num}
+  	</select>
+  	
+  	<select id="dressone" resultType="com.hs.app.dto.Dress_list_Dto">
+  		select * from dress_list WHERE dress_num = #{dress_num}
+  	</select>
+   
+   
+   
+   
+   
+   
+   		<update id = "doupdate_Reply" parameterType="com.hs.app.dto.Reply_Dto" ><!-- 댓글수정쿼리 -->
+	      update review_comment set comment_content = #{comment_content} where comment_idx = #{comment_idx}
+	   </update>
+   
+   
+		<delete id="reply_delete"  parameterType="com.hs.app.dto.Reply_Dto" > <!-- 댓글삭제쿼리 -->
+	      delete from review_comment WHERE comment_idx = #{comment_idx}
+	   </delete>
+   
+   
+   
+   
+   
+   
+
+</mapper>
